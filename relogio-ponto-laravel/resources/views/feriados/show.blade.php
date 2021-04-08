@@ -100,6 +100,7 @@
                         <th scope="col">nome</th>
                         <th scope="col">data</th>
                         <th scope="col">dia</th>
+                        <th scope="col">obrigatório</th>
                         <th scope="col" class="">ação</th>
                     </tr>
                 </thead>
@@ -117,6 +118,13 @@
                                     <span>útil</span>
                                 @elseif($ponto->uteis == 1)
                                     <span>fim de semana</span>
+                                @endif
+                            </td>
+                            <td>
+                                @if($ponto->obrigatorio == 0)
+                                    <span>sim</span>
+                                @elseif($ponto->obrigatorio == 1)
+                                    <span>não</span>
                                 @endif
                             </td>
 
@@ -155,7 +163,7 @@
                         <a class="btn-neon-primary btn btn-theme" href="{{ route('recessos.create')}}">adicionar recesso</a>
                     </div>
                 </div>
-               
+
                 <thead>
                     <tr id="cabecalho">
                         <th scope="col">nome</th>

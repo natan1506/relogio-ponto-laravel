@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f05edf23-45c6-4f76-b7ef-1211e481448f" name="Default Changelist" comment="" />
+    <list default="true" id="f05edf23-45c6-4f76-b7ef-1211e481448f" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -38,7 +41,7 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/relogio-ponto-laravel" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="PhpWorkspaceProjectConfiguration">
     <include_path>
@@ -172,7 +175,11 @@
       <workItem from="1582217555034" duration="10315000" />
       <workItem from="1582293702568" duration="60871000" />
       <workItem from="1583752294858" duration="5397000" />
-      <workItem from="1583787439221" duration="2606000" />
+      <workItem from="1583787439221" duration="2778000" />
+      <workItem from="1584099353554" duration="1000" />
+      <workItem from="1584116470156" duration="2861000" />
+      <workItem from="1584533613875" duration="1124000" />
+      <workItem from="1584625436932" duration="2168000" />
     </task>
     <servers />
   </component>

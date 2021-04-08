@@ -61,7 +61,6 @@ class PontoController extends Controller
     }
     public function store(Request $request)
     {
-
         date_default_timezone_set('America/Sao_Paulo');
         $date_time = new DateTime();
 
@@ -71,9 +70,8 @@ class PontoController extends Controller
 
         $tableUsers = DB::table('users')
             ->select('nome', 'username', 'foto')
-            ->where('username','=', $request->matricula)
+            ->where('username','=', $matricula)
             ->first();
-
 
         if($tableUsers){
             $tablePonto = DB::table('pontos')
@@ -92,11 +90,8 @@ class PontoController extends Controller
                 return redirect('/')->with(['success' => 'success', 'dados' => $tableUsers]);
 
             } else {
-
                 foreach ($tablePonto as $key => $value){
-
-                    if($value === null){
-
+                    if(!$value){
                         if($key === 'saida1'){
                             $prev = 'entrada1';
 
@@ -109,29 +104,26 @@ class PontoController extends Controller
                         }elseif ($key === 'entrada3'){
                             $prev = 'saida2';
 
-                        }elseif ($key === 'saida3'){
+                        }elseif ($key === 'saida3') {
                             $prev = 'entrada3';
 
                         }
 
                         $ponto = DB::table('pontos')
-                            ->select('data', $prev)
-                            ->where('data', '=', $date)
+                            ->where([['data', '=', $date],['matricula', '=', $matricula]])
                             ->first();
 
                         $date_time_ponto = new DateTime($ponto->$prev);
 
                         $dataBanco = explode('-', $ponto->data);
-                        $time = explode(':', $date_time_ponto->format('h:i:s'));
+                        $time = explode(':', $date_time_ponto->format('H:i:s'));
 
 
                         $date_time_final_ponto = new DateTime();
                         $date_time_final_ponto->setDate($dataBanco[0], $dataBanco[1], $dataBanco[2]);
                         $date_time_final_ponto->setTime($time[0], $time[1], $time[2]);
 
-
                         $diff = date_diff($date_time_final_ponto, $date_time);
-
 
                         if ($diff->h < 1 && $diff->i <= 15 ){
                             return redirect('/')->with('preenchido' , 'você já bateu a '.$prev);
@@ -140,7 +132,6 @@ class PontoController extends Controller
                             DB::table('pontos')
                                 ->where([['data','=', $date], ['matricula', '=', $matricula]])
                                 ->update([$key => $date_time]);
-
 
                             return redirect('/')->with(['success' => 'success', 'dados' => $tableUsers]);
                         }
@@ -162,8 +153,8 @@ class PontoController extends Controller
         $mesSelect = '01';
 
         $ano = date('Y');
-        $date = date('Y-m-d');
-        $data = date('Y-m-d', strtotime("+1 days", strtotime($date)));
+        $data = date('Y-m-d');
+        // $data = date('Y-m-d', strtotime("+1 days", strtotime($date)));
 
         $tableUsers = DB::table('users')
             ->where('username','=', $matricula)
@@ -191,7 +182,10 @@ class PontoController extends Controller
 
         $tableFeriados = DB::table('feriados')
             ->select('feriado', 'uteis')
-            ->where('uteis', '=', '0')
+            ->where([
+                ['uteis', '=', '0'],
+                ['obrigatorio', '=', "0"]
+            ])
             ->get();
 
         $valuesPonto = $tablePontosMes;
@@ -224,17 +218,17 @@ class PontoController extends Controller
         $inicio = new DateTime($ano."-01-01");
         $fim = new DateTime($data);
 
-        $diasUteis = [];
-
-
         $periodo = new DatePeriod($inicio, new DateInterval('P1D'), $fim);
 
-
+        $diasUteis = [];
+        $sextas = [];
         foreach($periodo as $item){
+
             if(substr($item->format("D"), 0, 1) != 'S'){
-                if(!in_array($item->format('Y-m-d'), $diasUteis)){
-                    $diasUteis[] = $item->format('Y-m-d');
-                }
+                $diasUteis[] = $item->format('Y-m-d');
+            }
+            if(substr($item->format("D"), 0, 1) === 'F'){
+                $sextas[] = $item->format('Y-m-d');
             }
         }
 
@@ -286,6 +280,7 @@ class PontoController extends Controller
                             array_push($feriados, $item->format('Y-m-d'));
                         }
                     }
+
                 }
             }
         }
@@ -310,6 +305,8 @@ class PontoController extends Controller
             $horasFaltantes = $horasFaltantes + 1;
         }
         $horasFaltantes = $horasFaltantes * 9;
+        $horasFaltantes = $horasFaltantes - count($sextas);
+
         $horasFaltantes = -$horasFaltantes.":00:00";
 
         $horas = 00;
@@ -420,16 +417,55 @@ class PontoController extends Controller
 
         date_default_timezone_set('America/Sao_Paulo');
 
-        dd($request);
+        $date_time = new DateTime($request->data);
+
+        if($request->entrada1){
+            $time = explode(':', $request->entrada1);
+            $entrada1 = $date_time->setTime($time[0], $time[1]);
+        }else{
+            $entrada1 = null;
+        }
+        if($request->saida1){
+            $time = explode(':', $request->saida1);
+            $saida1 = $date_time->setTime($time[0], $time[1]);
+        }else{
+            $saida1 = null;
+        }
+        if($request->entrada2){
+            $time = explode(':', $request->entrada2);
+            $entrada2 = $date_time->setTime($time[0], $time[1]);
+        }else{
+            $entrada2 = null;
+        }
+        if($request->saida2){
+            $time = explode(':', $request->saida2);
+            $saida2 = $date_time->setTime($time[0], $time[1]);
+        }else{
+            $saida2 = null;
+        }
+        if($request->entrada3){
+            $time = explode(':', $request->entrada3);
+            $entrada3 = $date_time->setTime($time[0], $time[1]);
+        }else{
+            $entrada3 = null;
+        }
+        if($request->saida3){
+            $time = explode(':', $request->saida3);
+            $saida3 = $date_time->setTime($time[0], $time[1]);
+        }else{
+            $saida3 = null;
+        }
+
+
         $ponto = Ponto::find($id);
         $ponto->nome = $request->get('nome');
         $ponto->matricula = $request->get('matricula');
-        $ponto->entrada1 =  $request->entrada1 ? new DateTime($request->get('entrada1')) : null;
-        $ponto->saida1 = $request->saida1 ? new DateTime($request->get('saida1')) : null;
-        $ponto->entrada2 = $request->entrada2 ? new DateTime($request->get('entrada2')) : null;
-        $ponto->saida2 = $request->saida2 ? new DateTime($request->get('saida2')) : null;
-        $ponto->entrada3 = $request->entrada3 ? new DateTime($request->get('entrada3')) : null;
-        $ponto->saida3 = $request->saida3 ? new DateTime($request->get('saida3')) : null;
+        $ponto->entrada1 =  $entrada1;
+        $ponto->saida1 = $saida1;
+        $ponto->entrada2 = $entrada2;
+        $ponto->saida2 = $saida2;
+        $ponto->entrada3 = $entrada3;
+        $ponto->saida3 = $saida3;
         $ponto->observacao = $request->get('observacao');
         $ponto->save();
 
@@ -503,8 +539,8 @@ class PontoController extends Controller
 
         $tablePontosMes = collect($tablePontosMes);
 
-        $date = date('Y-m-d');
-        $data = date('Y-m-d', strtotime("+1 days", strtotime($date)));
+        $data = date('Y-m-d');
+        // $data = date('Y-m-d', strtotime("+1 days", strtotime($date)));
 
         $tableUsers = DB::table('users')
             ->where('username','=', $matricula)
@@ -512,7 +548,10 @@ class PontoController extends Controller
 
         $tableFeriados = DB::table('feriados')
             ->select('feriado', 'uteis')
-            ->where('uteis', '=', '0')
+            ->where([
+                ['uteis', '=', '0'],
+                ['obrigatorio', '=', "0"]
+            ])
             ->get();
 
         $tableFerias = DB::table('ferias')
@@ -534,7 +573,6 @@ class PontoController extends Controller
             ->whereYear('data', $ano)
             ->orderBy('data', 'asc')
             ->get();
-
 
         $tablePontos = [];
 
@@ -568,10 +606,14 @@ class PontoController extends Controller
         $periodo = new DatePeriod($inicio, new DateInterval('P1D'), $fim);
 
         $diasUteis = [];
+        $sextas = [];
         foreach($periodo as $item){
 
             if(substr($item->format("D"), 0, 1) != 'S'){
                 $diasUteis[] = $item->format('Y-m-d');
+            }
+            if(substr($item->format("D"), 0, 1) === 'F'){
+                $sextas[] = $item->format('Y-m-d');
             }
         }
 
@@ -642,11 +684,9 @@ class PontoController extends Controller
 
         $horasFaltantes = 0;
 
-        foreach($result as $dias){
+        $horasFaltantes = count($result) * 9;
 
-            $horasFaltantes = $horasFaltantes + 1;
-        }
-        $horasFaltantes = $horasFaltantes * 9;
+        $horasFaltantes = $horasFaltantes - count($sextas);
 
         $horasFaltantes = -$horasFaltantes.":00:00";
 
@@ -927,7 +967,7 @@ class PontoController extends Controller
 
                 foreach ( $horas as $hora )
                 {
-                    list( $g, $i, $s ) = explode( ':', $hora );
+
                     if ($g < 0) {
                         $i *= -1;
                         $s *= -1;
@@ -986,6 +1026,91 @@ class PontoController extends Controller
 
             return redirect('/pontos')->with(['success' => 'ponto criado com sucesso!', 'dados' => $tableUsers]);
 
+        }
+    }
+
+    public function atualizaAut(Request $request)
+    {
+        if($request->key === 'natan'){
+            $tableUsers = DB::table('users')
+                ->where('username','=', $request->matricula)
+                ->first();
+
+            $ano = date('Y');
+            $date = date('Y-m-d');
+            $data = date('Y-m-d', strtotime("+1 days", strtotime($date)));
+
+            //comeco saldo total
+            $inicio = new DateTime($ano."-01-01");
+            $fim = new DateTime($data);
+
+            $periodo = new DatePeriod($inicio, new DateInterval('P1D'), $fim);
+
+            foreach($periodo as $item){
+
+                if(substr($item->format("D"), 0, 1) != 'S'){
+                    if(substr($item->format("D"), 0, 1) === 'F') {
+                        $date_time = new DateTime($item->format('Y-m-d'));
+
+                        $entrada1 =  new DateTime($item->format('Y-m-d'));
+                        $entrada1->setTime('08', '00');
+
+                        $saida1 = new DateTime($item->format('Y-m-d'));
+                        $saida1->setTime('12', '00');
+
+                        $entrada2 = new DateTime($item->format('Y-m-d'));
+                        $entrada2->setTime('13', '00');
+
+                        $saida2 = new DateTime($item->format('Y-m-d'));
+                        $saida2->setTime('17', '00');
+
+                        $ponto = new Ponto([
+                            'nome' => $tableUsers->nome,
+                            'matricula'=> $tableUsers->username,
+                            'data'=> $item->format('Y-m-d'),
+                            'entrada1' =>  $entrada1,
+                            'saida1' => $saida1,
+                            'entrada2' => $entrada2,
+                            'saida2' => $saida2,
+                        ]);
+
+                        $ponto->save();
+                    } else {
+                        $date_time = new DateTime($item->format('Y-m-d'));
+
+                        $entrada1 =  new DateTime($item->format('Y-m-d'));
+                        $entrada1->setTime('08', '00');
+
+                        $saida1 = new DateTime($item->format('Y-m-d'));
+                        $saida1->setTime('12', '00');
+
+                        $entrada2 = new DateTime($item->format('Y-m-d'));
+                        $entrada2->setTime('13', '00');
+
+                        $saida2 = new DateTime($item->format('Y-m-d'));
+                        $saida2->setTime('18', '00');
+
+                        $ponto = new Ponto([
+                            'nome' => $tableUsers->nome,
+                            'matricula'=> $tableUsers->username,
+                            'data'=> $item->format('Y-m-d'),
+                            'entrada1' =>  $entrada1,
+                            'saida1' => $saida1,
+                            'entrada2' => $entrada2,
+                            'saida2' => $saida2,
+                        ]);
+
+                        $ponto->save();
+                    }
+
+
+                }
+            }
+
+            echo 'ok';
+
+        }else {
+            return redirect('/');
         }
     }
 }

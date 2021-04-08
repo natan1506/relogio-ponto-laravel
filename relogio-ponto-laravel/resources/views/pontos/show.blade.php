@@ -47,7 +47,23 @@
                     <h5> {{ $tableUsers->nome }}</h5>
 
                     <h5>Saldo total: {{ $horasFinais }}</h5>
-                    <h5>Filial: {{ $tableUsers->filial }}</h5>
+                    <h5 class="d-print-none">Filial: {{ $tableUsers->filial }}</h5>
+                    @if($tableUsers->filial === 'LC')
+                        <h5 class="d-none d-print-block">Empregador: LC PRESENTES - EIRELI</h5>
+                        <h5 class="d-none d-print-block">CNPJ: 26.648.383/0001-00</h5>
+                    @endif
+                    @if($tableUsers->filial === 'AGG')
+                        <h5 class="d-none d-print-block">Empregador: AGG COMERCIO DE UTILIDADES DOMESTICAS LTDA</h5>
+                        <h5 class="d-none d-print-block">CNPJ: 26.667.122/0001-20</h5>
+                    @endif
+                    @if($tableUsers->filial === 'AMA')
+                        <h5 class="d-none d-print-block">Empregador: AMA BRINDES EIRELI</h5>
+                        <h5 class="d-none d-print-block">CNPJ: 26.668.569/0001-13</h5>
+                    @endif
+                    @if($tableUsers->filial === 'DUDE')
+                        <h5 class="d-none d-print-block">Empregador: DUDE - COMERCIO DE UTILIDADES - EIRELI</h5>
+                        <h5 class="d-none d-print-block">CNPJ: 27.022.513/0001-50</h5>
+                    @endif
                 </div>
             </div>
 
@@ -58,8 +74,26 @@
                     src="../../../storage/img/{{$tableUsers->foto}}"/>
                 </div>
                 <div class="col w-50 p-2">
-                    <div><h4> {{ $tableUsers->nome }}</h4>
-                        <h4>Saldo total: {{ $horasFinais }}</h4></div>
+                    <div><h5> {{ $tableUsers->nome }}</h5>
+                        <h5>Saldo total: {{ $horasFinais }}</h5>
+                        <h5 class="d-print-none">Filial: {{ $tableUsers->filial }}</h5>
+                        @if($tableUsers->filial === 'LC')
+                            <h5 class="d-none d-print-block">Empregador: LC PRESENTES - EIRELI</h5>
+                            <h5 class="d-none d-print-block">CNPJ: 26.648.383/0001-00</h5>
+                        @endif
+                        @if($tableUsers->filial === 'AGG')
+                            <h5 class="d-none d-print-block">Empregador: AGG COMERCIO DE UTILIDADES DOMESTICAS LTDA</h5>
+                            <h5 class="d-none d-print-block">CNPJ: 26.667.122/0001-20</h5>
+                        @endif
+                        @if($tableUsers->filial === 'AMA')
+                            <h5 class="d-none d-print-block">Empregador: AMA BRINDES EIRELI</h5>
+                            <h5 class="d-none d-print-block">CNPJ: 26.668.569/0001-13</h5>
+                        @endif
+                        @if($tableUsers->filial === 'DUDE')
+                            <h5 class="d-none d-print-block">Empregador: DUDE - COMERCIO DE UTILIDADES - EIRELI</h5>
+                            <h5 class="d-none d-print-block">CNPJ: 27.022.513/0001-50</h5>
+                        @endif
+                    </div>
                 </div>
             </div>
         @endif
@@ -265,6 +299,12 @@
 
             </div>
         <div>
+        <div class="d-none d-print-block">
+            <div class="form-row">
+                <span class="w-100 text-center">______________________________________________________</span>
+                <span class="w-100 text-center">assinatura funcionário</span>
+            </div>
+        </div>
     @isset($tableUsers)
     <!-- Modal -->
         <div class="modal fade" id="ExemploModalCentralizado" tabindex="-1" role="dialog" aria-labelledby="TituloModalCentralizado" aria-hidden="true">

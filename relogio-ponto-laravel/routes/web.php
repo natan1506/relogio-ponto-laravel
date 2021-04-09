@@ -14,7 +14,7 @@ Route::get('pontos/periodo', 'PontoController@periodo')->name('pontos.periodo');
 Route::post('pontos/create/manual', 'PontoController@storeManual')->name('pontos.create.manual');
 Route::get('pontos/relatorio', 'PontoController@relatorioTotal')->name('pontos.relatorio');
 Route::get('pontos/search', 'PontoController@search')->name('pontos.search');
-Route::get('pontos/atualiza', 'PontoController@atualizaAut')->name('pontos.atualizaAut');
+// Route::get('pontos/atualiza', 'PontoController@atualizaAut')->name('pontos.atualizaAut');
 
 Route::resource('pontos', 'PontoController');
 

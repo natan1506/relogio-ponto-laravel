@@ -77,7 +77,7 @@ class PontoController extends Controller
             $tablePonto = DB::table('pontos')
                 ->where([['data' , $date],['matricula' , $matricula]])
                 ->first();
-
+// dd($tablePonto);
             if(!$tablePonto){
                 $ponto = new Ponto([
                     'nome' => $tableUsers->nome,
@@ -91,7 +91,8 @@ class PontoController extends Controller
 
             } else {
                 foreach ($tablePonto as $key => $value){
-                    if(!$value){
+                    if(!$value && $value != '0'){
+
                         if($key === 'saida1'){
                             $prev = 'entrada1';
 
@@ -325,6 +326,17 @@ class PontoController extends Controller
             // Encontra os minutos trabalhados
             $minutes = round(($total - ($hours * 60 * 60)) / 60);
 
+            if($ponto->saida_justificada !== '0' && $ponto->saida_justificada !== null && $hours < 8){
+                if(date("l", strtotime($ponto->data)) === 'Friday'){
+                    $newHour = 8 - $hours;
+                    $hours = $hours + $newHour;
+
+                } else {
+                    $newHour = 9 - $hours;
+                    $hours = $hours + $newHour;
+                }
+            }
+
             // Formata a hora e minuto para ficar no formato de 2 números, exemplo 00
             $hours = str_pad($hours, 2, "0", STR_PAD_LEFT);
 
@@ -346,6 +358,7 @@ class PontoController extends Controller
         $horasMes = $horas.":".$minutos.":00";
 
         $horas = array($horasFaltantes, $horasMes);
+        // dd($horas);
 
         $seconds = 0;
 
@@ -361,7 +374,7 @@ class PontoController extends Controller
             $seconds += $s;
         }
 
-        $hours    = floor( $seconds / 3600 );
+        $hours = floor( $seconds / 3600 );
         $seconds -= $hours * 3600;
         $minutes  = floor( $seconds / 60 );
         $seconds -= $minutes * 60;
@@ -417,41 +430,45 @@ class PontoController extends Controller
 
         date_default_timezone_set('America/Sao_Paulo');
 
-        $date_time = new DateTime($request->data);
-
         if($request->entrada1){
             $time = explode(':', $request->entrada1);
-            $entrada1 = $date_time->setTime($time[0], $time[1]);
+            $entrada1 =  new DateTime($request->data);
+            $entrada1->setTime($time[0], $time[1]);
         }else{
             $entrada1 = null;
         }
         if($request->saida1){
             $time = explode(':', $request->saida1);
-            $saida1 = $date_time->setTime($time[0], $time[1]);
+            $saida1 = new DateTime($request->data);
+            $saida1->setTime($time[0], $time[1]);
         }else{
             $saida1 = null;
         }
         if($request->entrada2){
             $time = explode(':', $request->entrada2);
-            $entrada2 = $date_time->setTime($time[0], $time[1]);
+            $entrada2 = new DateTime($request->data);
+            $entrada2->setTime($time[0], $time[1]);
         }else{
             $entrada2 = null;
         }
         if($request->saida2){
             $time = explode(':', $request->saida2);
-            $saida2 = $date_time->setTime($time[0], $time[1]);
+            $saida2 = new DateTime($request->data);
+            $saida2->setTime($time[0], $time[1]);
         }else{
             $saida2 = null;
         }
         if($request->entrada3){
             $time = explode(':', $request->entrada3);
-            $entrada3 = $date_time->setTime($time[0], $time[1]);
+            $entrada3 =  new DateTime($request->data);
+            $entrada3->setTime($time[0], $time[1]);
         }else{
             $entrada3 = null;
         }
         if($request->saida3){
             $time = explode(':', $request->saida3);
-            $saida3 = $date_time->setTime($time[0], $time[1]);
+            $saida3 = new DateTime($request->data);
+            $saida3->setTime($time[0], $time[1]);
         }else{
             $saida3 = null;
         }
@@ -467,6 +484,7 @@ class PontoController extends Controller
         $ponto->entrada3 = $entrada3;
         $ponto->saida3 = $saida3;
         $ponto->observacao = $request->get('observacao');
+        $ponto->saida_justificada = $request->get('saida_justificada');
         $ponto->save();
 
         return redirect('/pontos/'.$ponto->matricula)->with('success', 'registro atualizado com sucesso!');
@@ -705,6 +723,17 @@ class PontoController extends Controller
 
             // Encontra os minutos trabalhados
             $minutes = round(($total - ($hours * 60 * 60)) / 60);
+
+            if($ponto->saida_justificada !== '0' && $ponto->saida_justificada !== null && $hours < 8){
+                if(date("l", strtotime($ponto->data)) === 'Friday'){
+                    $newHour = 8 - $hours;
+                    $hours = $hours + $newHour;
+
+                } else {
+                    $newHour = 9 - $hours;
+                    $hours = $hours + $newHour;
+                }
+            }
 
             // Formata a hora e minuto para ficar no formato de 2 números, exemplo 00
             $hours = str_pad($hours, 2, "0", STR_PAD_LEFT);

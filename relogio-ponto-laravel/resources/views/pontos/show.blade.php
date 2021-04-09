@@ -41,7 +41,7 @@
             <div class="rounded row m-2 ">
                 <div class="col-4 w-50 p-2">
                     <img class="avatar avatar-lg border-danger" style="width: 7rem; height: 6.8rem;"
-                    src="../../../storage/img/{{$tableUsers->foto}}"/>
+                    src="/assets/img/public/img/{{$tableUsers->foto}}"/>
                 </div>
                 <div class="col flex-row w-50 p-2">
                     <h5> {{ $tableUsers->nome }}</h5>
@@ -233,24 +233,50 @@
 
                                     @endphp
                                     <tr>
-                                        @if($ponto->observacao != null)
+                                        @if($ponto->observacao != null || $ponto->saida_justificada != null && $ponto->saida_justificada != '0')
 
-                                                <td class="text-center">
-                                                    <button type="button" class="border-0 btn btn-theme" data-toggle="modal" data-target="#ExemploModalCentralizado{{ $i }}">
-                                                        <i class="fas fa-exclamation"></i>
-                                                    </button>
-                                                </td>
+                                            <td class="text-center">
+                                                <button type="button" class="border-0 btn btn-theme" data-toggle="modal" data-target="#ExemploModalCentralizado{{ $i }}">
+                                                    <i class="fas fa-exclamation"></i>
+                                                </button>
+                                            </td>
                                             <!-- Modal-->
                                             <div class="modal fade" id="ExemploModalCentralizado{{ $i }}" tabindex="-1" role="dialog" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <div class="modal-header d-flex justify-content-end">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title text-dark" id="TituloModalCentralizado">Observações do registro</h5>
                                                             <button type="button" class="close rounded-pill" data-dismiss="modal" aria-label="Fechar">
                                                                 <span aria-hidden="true">&times;</span>
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">
-                                                        {{ $ponto->observacao }}
+                                                            <div class="form-row">
+                                                                <div class="col">
+                                                                    <div class="form-group">
+                                                                        <label>saída justificada?</label>
+                                                                        @if($ponto->saida_justificada === '0' || $ponto->saida_justificada === null)
+                                                                            <input type="text" class="form-control" disabled value="não">
+                                                                        @endif
+                                                                        @if($ponto->saida_justificada === '1')
+                                                                            <input type="text" class="form-control" disabled value="atestado">
+                                                                        @endif
+                                                                        @if($ponto->saida_justificada === '2')
+                                                                            <input type="text" class="form-control" disabled value="outros">
+                                                                        @endif
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            @if($ponto->observacao != null)
+                                                                <div class="form-row">
+                                                                    <div class="col">
+                                                                        <div class="form-group">
+                                                                            <label class="w-100">observação:</label>
+                                                                            <span>{{ $ponto->observacao }}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </div>

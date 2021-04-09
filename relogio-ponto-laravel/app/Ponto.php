@@ -16,6 +16,7 @@ class Ponto extends Model
         'saida2',
         'entrada3',
         'saida3',
-        'observacao'
+        'observacao',
+        'saida_justificada'
       ];
 }
